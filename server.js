@@ -1,43 +1,31 @@
 (function() {
-  var app, express, i, io, m_players;
 
-  express = require('express');
+  var express = require('express');
 
-  io = require('socket.io');
+  var io = require('socket.io');
 
-  app = module.exports = express.createServer();
+  var app = express();
+  var http = require('http');
+  var server = http.createServer(app);
+  var path = require('path')
+  var io = io.listen(server);
 
-  io = io.listen(app);
 
-  io.set('log level', 1);
+    app.set('view engine', 'pug');
 
-  app.configure(function() {
-    app.set('views', __dirname + '/views');
-    app.set('view engine', 'jade');
-    app.use(express.bodyParser());
-    app.use(express.methodOverride());
-    app.use(app.router);
-    return app.use(express.static(__dirname + '/public'));
-  });
-
-  app.configure('development', function() {
-    return app.use(express.errorHandler({
-      dumpExceptions: true,
-      showStack: true
-    }));
-  });
-
-  app.configure('production', function() {
-    return app.use(express.errorHandler());
-  });
+app.set('public', path.join(__dirname, 'public'))
+app.get('/jquery.js', function(req, res){
+  res.sendFile(__dirname + '/public/javascripts/jquery.js');
+});
+app.get('/style.css', function(req, res){
+  res.sendFile(__dirname + '/public/stylesheets/style.css');
+});
 
   app.get('/', function(req, res) {
-    return res.render('index', {
-      title: 'Node.JS Sockets'
-    });
+    res.render('index', {});
   });
 
-  app.listen(3000);
+  server.listen(3335);
 
   m_players = [];
 
