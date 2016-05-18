@@ -1,31 +1,24 @@
 (function() {
 
   var express = require('express');
-
   var io = require('socket.io');
-
   var app = express();
   var http = require('http');
   var server = http.createServer(app);
   var path = require('path')
   var io = io.listen(server);
+  var port = 3335
 
-
-    app.set('view engine', 'pug');
-
-app.set('public', path.join(__dirname, 'public'))
-app.get('/jquery.js', function(req, res){
-  res.sendFile(__dirname + '/public/javascripts/jquery.js');
-});
-app.get('/style.css', function(req, res){
-  res.sendFile(__dirname + '/public/stylesheets/style.css');
-});
-
+  app.set('view engine', 'pug');
+  app.set('public', path.join(__dirname, 'public'));
+  app.get('/style.css', function(req, res){
+    res.sendFile(__dirname + '/public/stylesheets/style.css');
+  });
   app.get('/', function(req, res) {
     res.render('index', {});
   });
 
-  server.listen(3335);
+  server.listen(port); console.log("listening on " +port);
 
   m_players = [];
 
