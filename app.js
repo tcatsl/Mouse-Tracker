@@ -10,9 +10,6 @@
 
   app.set('view engine', 'pug');
   app.set('public', path.join(__dirname, 'public'))
-  app.get('/jquery.js', function(req, res){
-    res.sendFile(__dirname + '/public/javascripts/jquery.js');
-  });
   app.get('/style.css', function(req, res){
     res.sendFile(__dirname + '/public/stylesheets/style.css');
   });
