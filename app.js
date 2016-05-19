@@ -26,52 +26,57 @@
 
   i = 0;
 
-  io.sockets.on('connection', function(socket) {
-    console.log("New connection: " + socket);
-    socket.on('client_connected', function(data) {
-      data.id = socket.id;
-      m_players[i] = data;
-      i++;
-      return io.sockets.emit("send_data", m_players);
-    });
-    socket.on('update_coords', function(pos) {
-      var x, _ref;
-      try {
-        for (x = 0, _ref = m_players.length; 0 <= _ref ? x <= _ref : x >= _ref; 0 <= _ref ? x++ : x--) {
-          if (m_players[x].id === socket.id) {
-            m_players[x].x = pos.x;
-            m_players[x].y = pos.y;
-            console.log("Client: " + socket.id);
-            console.log("X: " + pos.x + ",  Y: " + pos.y);
-            break;
-          }
+io.sockets.on('connection', function(socket) {
+  console.log("New connection: " + socket);
+
+  socket.on('client_connected', function(data){
+    data.id = socket.id;
+    m_players[i] = data;
+    i++;
+    io.sockets.emit("send_data", m_players)
+   });
+
+   socket.on('update_coords', function(pos){
+
+     for(var x=0; x < m_players.length; x++)
+     {
+       if (m_players[x].id == socket.id)
+       {
+         m_players[x].x = pos.x;
+         m_players[x].y = pos.y;
+
+         console.log("Client: " + socket.id);
+         console.log("X: " + pos.x + ",  Y: " + pos.y );
+         break;
+       }
+     }
+
+     io.sockets.emit("send_data", m_players);
+   });
+
+   socket.on('disconnect', function()
+   {
+     var j = 0;
+     var n = 0;
+     var tmp = [];
+
+     while (n < m_players.length)
+     {
+       if (m_players[j].id == socket.id)
+         n++;
+
+       if (n < m_players.length)
+       {
+         tmp[j] = m_players[n];
+         j++;
+         n++;
         }
-      } catch (err) {
-        console.log(err);
       }
-      return io.sockets.emit("send_data", m_players);
-    });
-    return socket.on('disconnect', function() {
-      var j, n, tmp;
-      j = 0;
-      n = 0;
-      tmp = [];
-      while (n < m_players.length) {
-        if (m_players[j].id === socket.id) {
-          n++;
-          break;
-        }
-        if (n < m_players.length) {
-          tmp[j] = m_players[n];
-          j++;
-          n++;
-          break;
-        }
-      }
+
       m_players = tmp;
       i = j;
-      return io.sockets.emit('send_data', m_players);
-    });
+       io.sockets.emit('send_data', m_players);
+   });
   });
 
 }).call(this);
